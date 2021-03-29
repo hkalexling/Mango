@@ -44,14 +44,14 @@ class Title
 
     mtimes = [@mtime]
     mtimes += @title_ids.map { |e| Library.default.title_hash[e].mtime }
-    mtimes += @entries.map { |e| e.mtime }
+    mtimes += @entries.map &.mtime
     @mtime = mtimes.max
 
     @title_ids.sort! do |a, b|
       compare_numerically Library.default.title_hash[a].title,
         Library.default.title_hash[b].title
     end
-    sorter = ChapterSorter.new @entries.map { |e| e.title }
+    sorter = ChapterSorter.new @entries.map &.title
     @entries.sort! do |a, b|
       sorter.compare a.title, b.title
     end
@@ -92,12 +92,12 @@ class Title
   # Get all entries, including entries in nested titles
   def deep_entries
     return @entries if title_ids.empty?
-    @entries + titles.map { |t| t.deep_entries }.flatten
+    @entries + titles.flat_map &.deep_entries
   end
 
   def deep_titles
     return [] of Title if titles.empty?
-    titles + titles.map { |t| t.deep_titles }.flatten
+    titles + titles.flat_map &.deep_titles
   end
 
   def parents
@@ -138,7 +138,7 @@ class Title
   end
 
   def get_entry(eid)
-    @entries.find { |e| e.id == eid }
+    @entries.find &.id.== eid
   end
 
   def display_name
@@ -217,29 +217,23 @@ class Title
     @entries.each do |e|
       e.save_progress username, e.pages
     end
-    titles.each do |t|
-      t.read_all username
-    end
+    titles.each &.read_all username
   end
 
   # Set the reading progress of all entries and nested libraries to 0%
   def unread_all(username)
-    @entries.each do |e|
-      e.save_progress username, 0
-    end
-    titles.each do |t|
-      t.unread_all username
-    end
+    @entries.each &.save_progress(username, 0)
+    titles.each &.unread_all username
   end
 
   def deep_read_page_count(username) : Int32
     load_progress_for_all_entries(username).sum +
-      titles.map { |t| t.deep_read_page_count username }.flatten.sum
+      titles.flat_map(&.deep_read_page_count username).sum
   end
 
   def deep_total_page_count : Int32
-    entries.map { |e| e.pages }.sum +
-      titles.map { |t| t.deep_total_page_count }.flatten.sum
+    entries.sum(&.pages) +
+      titles.flat_map(&.deep_total_page_count).sum
   end
 
   def load_percentage(username)
@@ -311,13 +305,13 @@ class Title
       ary = @entries.zip(percentage_ary)
         .sort { |a_tp, b_tp| (a_tp[1] <=> b_tp[1]).or \
           compare_numerically a_tp[0].title, b_tp[0].title }
-        .map { |tp| tp[0] }
+        .map &.[0]
     else
       unless opt.method.auto?
         Logger.warn "Unknown sorting method #{opt.not_nil!.method}. Using " \
                     "Auto instead"
       end
-      sorter = ChapterSorter.new @entries.map { |e| e.title }
+      sorter = ChapterSorter.new @entries.map &.title
       ary = @entries.sort do |a, b|
         sorter.compare(a.title, b.title).or \
           compare_numerically a.title, b.title
@@ -383,13 +377,13 @@ class Title
       {entry: e, date_added: da_ary[i]}
     end
     return zip if title_ids.empty?
-    zip + titles.map { |t| t.deep_entries_with_date_added }.flatten
+    zip + titles.flat_map &.deep_entries_with_date_added
   end
 
   def bulk_progress(action, ids : Array(String), username)
     selected_entries = ids
       .map { |id|
-        @entries.find { |e| e.id == id }
+        @entries.find &.id.==(id)
       }
       .select(Entry)
 

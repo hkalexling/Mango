@@ -260,9 +260,7 @@ const downloadComponent = () => {
 						}
 						const successCount = parseInt(data.success);
 						const failCount = parseInt(data.fail);
-						UIkit.modal.confirm(`${successCount} of ${successCount + failCount} chapters added to the download queue. Proceed to the download manager?`).then(() => {
-							window.location.href = base_url + 'admin/downloads';
-						});
+						alert('success', `${successCount} of ${successCount + failCount} chapters added to the download queue. You can view and manage your download queue on the <a href="${base_url}admin/downloads">download manager page</a>.`);
 					})
 					.fail((jqXHR, status) => {
 						alert('danger', `Failed to add chapters to the download queue. Error: [${jqXHR.status}] ${jqXHR.statusText}`);
@@ -282,6 +280,100 @@ const downloadComponent = () => {
 			UIkit.modal($('#modal').get(0)).hide();
 			this.searchInput = id;
 			this.search();
+		},
+
+		subscribe(langConfirmed = false, groupConfirmed = false) {
+			const filters = {
+				manga: this.data.id,
+				language: this.langChoice === 'All' ? null : this.langChoice,
+				group: this.groupChoice === 'All' ? null : this.groupChoice,
+				volume: this.volumeRange === '' ? null : this.volumeRange,
+				chapter: this.chapterRange === '' ? null : this.chapterRange
+			};
+
+			// Get group ID
+			if (filters.group) {
+				this.data.chapters.forEach(chp => {
+					const gid = chp.groups[filters.group];
+					if (gid) {
+						filters.groupId = gid;
+						return;
+					}
+				});
+			}
+
+			// Parse range values
+			if (filters.volume) {
+				[filters.volumeMin, filters.volumeMax] = this.parseRange(filters.volume);
+			}
+			if (filters.chapter) {
+				[filters.chapterMin, filters.chapterMax] = this.parseRange(filters.chapter);
+			}
+
+			if (!filters.language && !langConfirmed) {
+				UIkit.modal.confirm('You didn\'t specify a language in the filtering rules. This might cause Mango to download chapters that are not in your preferred language. Are you sure you want to continue?', {
+					labels: {
+						ok: 'Yes',
+						cancel: 'Cancel'
+					}
+				}).then(() => {
+					this.subscribe(true, groupConfirmed);
+				});
+				return;
+			}
+
+			if (!filters.group && !groupConfirmed) {
+				UIkit.modal.confirm('You didn\'t specify a group in the filtering rules. This might cause Mango to download multiple versions of the same chapter. Are you sure you want to continue?', {
+					labels: {
+						ok: 'Yes',
+						cancel: 'Cancel'
+					}
+				}).then(() => {
+					this.subscribe(langConfirmed, true);
+				});
+				return;
+			}
+
+			const mangaURL = `${mangadex_base_url}/manga/${filters.manga}`;
+
+			console.log(filters);
+			UIkit.modal.confirm(`All <strong>FUTURE</strong> chapters matching the following filters will be downloaded:<br>
+			<ul>
+			<li>Manga ID: ${filters.manga}</li>
+			<li>Language: ${filters.language || 'all'}</li>
+			<li>Group: ${filters.group || 'all'}</li>
+			<li>Volume: ${filters.volume || 'all'}</li>
+			<li>Chapter: ${filters.chapter || 'all'}</li>
+			</ul>
+
+			<strong>IMPORTANT:</strong> Please make sure you are following the manga on MangaDex, otherwise Mango won't be able to receive any updates. To follow it, visit <a href="${mangaURL}">${mangaURL}</a> and click "Follow".
+				`, {
+				labels: {
+					ok: 'Confirm',
+					cancel: 'Cancel'
+				}
+			}).then(() => {
+				$.ajax({
+						type: 'POST',
+						url: `${base_url}api/admin/mangadex/subscriptions`,
+						data: JSON.stringify({
+							subscription: filters
+						}),
+						contentType: "application/json",
+						dataType: 'json'
+					})
+					.done(data => {
+						console.log(data);
+						if (data.error) {
+							alert('danger', `Failed to subscribe. Error: ${data.error}`);
+							return;
+						}
+						alert('success', `You've successfully subscribed to this manga! You can view and manage your subscriptions on the <a href="${base_url}download/subscription">subscription manager page</a>.`);
+					})
+					.fail((jqXHR, status) => {
+						alert('danger', `Failed to subscribe. Error: [${jqXHR.status}] ${jqXHR.statusText}`);
+					});
+			});
 		}
 	};
 };

@@ -11,7 +11,7 @@ end
 def split_by_alphanumeric(str)
   arr = [] of String
   str.scan(/([^\d\n\r]*)(\d*)([^\d\n\r]*)/) do |match|
-    arr += match.captures.select { |s| s != "" }
+    arr += match.captures.select &.!= ""
   end
   arr
 end

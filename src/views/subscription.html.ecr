@@ -1,0 +1,54 @@
+<h2 class="uk-title">MangaDex Subscription Manager</h2>
+
+<div x-data="component()" x-init="init()">
+  <p x-show="available === false">The subscription manager uses a MangaDex API that requires authentication. Please <a href="<%= base_url %>admin/mangadex">connect to MangaDex</a> before using this feature.</p>
+
+  <p x-show="available && subscriptions.length === 0">No subscription found. Go to the <a href="<%= base_url %>download">MangaDex download page</a> and start subscribing.</p>
+
+  <template x-if="subscriptions.length > 0">
+    <div class="uk-overflow-auto">
+      <table class="uk-table uk-table-striped">
+        <thead>
+          <tr>
+            <th>Manga ID</th>
+            <th>Language</th>
+            <th>Group ID</th>
+            <th>Volume Range</th>
+            <th>Chapter Range</th>
+            <th>Creator</th>
+            <th>Last Checked</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="sub in subscriptions" :key="sub">
+            <tr>
+              <td><a :href="`<%= mangadex_base_url %>/manga/${sub.manga_id}`" x-text="sub.manga_id"></a></td>
+              <td x-text="sub.language || 'All'"></td>
+              <td>
+                <a x-show="sub.group_id" :href="`<%= mangadex_base_url %>/group/${sub.group_id}`" x-text="sub.group_id"></a>
+                <span x-show="!sub.group_id">All</span>
+              </td>
+              <td x-text="formatRange(sub.min_volume, sub.max_volume)"></td>
+              <td x-text="formatRange(sub.min_chapter, sub.max_chapter)"></td>
+              <td x-text="sub.username"></td>
+              <td x-text="`${moment.unix(sub.last_checked).fromNow()}`"></td>
+              <td x-text="`${moment.unix(sub.created_at).fromNow()}`"></td>
+              <td :data-id="sub.id">
+                <a @click="check($event)" x-show="sub.username === '<%= username %>'" uk-icon="refresh" uk-tooltip="Check for updates"></a>
+                <a @click="rm($event)" x-show="sub.username === '<%= username %>'" uk-icon="trash" uk-tooltip="Delete"></a>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </template>
+</div>
+
+<% content_for "script" do %>
+  <%= render_component "moment" %>
+  <script src="<%= base_url %>js/alert.js"></script>
+  <script src="<%= base_url %>js/subscription.js"></script>
+<% end %>

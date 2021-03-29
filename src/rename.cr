@@ -35,15 +35,15 @@ module Rename
 
   class Group < Base(Pattern | String)
     def render(hash : VHash)
-      return "" if @ary.select(&.is_a? Pattern)
+      return "" if @ary.select(Pattern)
                      .any? &.as(Pattern).render(hash).empty?
-      @ary.map do |e|
+      @ary.join do |e|
         if e.is_a? Pattern
           e.render hash
         else
           e
         end
-      end.join
+      end
     end
   end
 
@@ -129,13 +129,13 @@ module Rename
     end
 
     def render(hash : VHash)
-      str = @ary.map do |e|
+      str = @ary.join do |e|
         if e.is_a? String
           e
         else
           e.render hash
         end
-      end.join.strip
+      end.strip
       post_process str
     end
 

@@ -72,7 +72,7 @@ def redirect(env, path)
 end
 
 def hash_to_query(hash)
-  hash.map { |k, v| "#{k}=#{v}" }.join("&")
+  hash.join "&" { |k, v| "#{k}=#{v}" }
 end
 
 def request_path_startswith(env, ary)
@@ -105,6 +105,25 @@ macro get_sort_opt
 
     sort_opt = SortOptions.new sort_method, is_ascending
   end
+end
+
+# Returns an authorized client
+def get_client(username : String) : MangaDex::Client
+  token, expires = Storage.default.get_md_token username
+
+  unless expires && token
+    raise "No token found for user #{username}"
+  end
+
+  client = MangaDex::Client.from_config
+  client.token = token
+  client.token_expires = expires
+
+  client
+end
+
+def get_client(env) : MangaDex::Client
+  get_client get_username env
 end
 
 module HTTP

@@ -86,7 +86,7 @@ class Entry
           SUPPORTED_IMG_TYPES.includes? \
             MIME.from_filename? e.filename
         }
-        .sort { |a, b|
+        .sort! { |a, b|
           compare_numerically a.filename, b.filename
         }
       yield file, entries

@@ -117,7 +117,7 @@ class Plugin
   def initialize(id : String)
     Plugin.build_info_ary
 
-    @info = @@info_ary.find { |i| i.id == id }
+    @info = @@info_ary.find &.id.== id
     if @info.nil?
       raise Error.new "Plugin with ID #{id} not found"
     end

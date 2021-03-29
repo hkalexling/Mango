@@ -10,6 +10,7 @@ const readerComponent = () => {
 		longPages: false,
 		lastSavedPage: page,
 		selectedIndex: 0, // 0: not selected; 1: the first page
+		margin: 30,
 
 		/**
 		 * Initialize the component by fetching the page dimensions
@@ -27,7 +28,6 @@ const readerComponent = () => {
 							url: `${base_url}api/page/${tid}/${eid}/${i+1}`,
 							width: d.width,
 							height: d.height,
-							style: `margin-top: ${data.margin}px; margin-bottom: ${data.margin}px;`
 						};
 					});
 
@@ -47,6 +47,11 @@ const readerComponent = () => {
 					const mode = this.mode;
 					this.updateMode(this.mode, page, nextTick);
 					$('#mode-select').val(mode);
+
+					const savedMargin = localStorage.getItem('margin');
+					if (savedMargin) {
+						this.margin = savedMargin;
+					}
 				})
 				.catch(e => {
 					const errMsg = `Failed to get the page dimensions. ${e}`;
@@ -277,6 +282,11 @@ const readerComponent = () => {
 		entryChanged() {
 			const id = $('#entry-select').val();
 			this.redirect(`${base_url}reader/${tid}/${id}`);
+		},
+
+		marginChanged() {
+			localStorage.setItem('margin', this.margin);
+			this.toPage(this.selectedIndex);
 		}
 	};
 }

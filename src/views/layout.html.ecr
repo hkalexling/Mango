@@ -1,89 +1,91 @@
 <!DOCTYPE html>
 <html>
 
-    <%= render_component "head" %>
+  <%= render_component "head" %>
 
-    <body>
-        <div class="uk-offcanvas-content">
-            <div class="uk-navbar-container uk-navbar-transparent" uk-navbar="uk-navbar">
-                <div id="mobile-nav" uk-offcanvas="overlay: true">
-                    <div class="uk-offcanvas-bar uk-flex uk-flex-column">
-                        <ul class="uk-nav-parent-icon uk-nav-primary uk-nav-center uk-margin-auto-vertical" uk-nav>
-                            <li><a href="<%= base_url %>">Home</a></li>
-                            <li><a href="<%= base_url %>library">Library</a></li>
-                            <li><a href="<%= base_url %>tags">Tags</a></li>
-                            <% if is_admin %>
-                                <li><a href="<%= base_url %>admin">Admin</a></li>
-                                <li class="uk-parent">
-                                    <a href="#">Download</a>
-                                    <ul class="uk-nav-sub">
-                                        <li><a href="<%= base_url %>download">MangaDex</a></li>
-                                        <li><a href="<%= base_url %>download/plugins">Plugins</a></li>
-                                        <li><a href="<%= base_url %>admin/downloads">Download Manager</a></li>
-                                    </ul>
-                                </li>
-                            <% end %>
-                            <hr uk-divider>
-                            <li><a onclick="toggleTheme()"><i class="fas fa-adjust"></i></a></li>
-                            <li><a href="<%= base_url %>logout">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+  <body>
+    <div class="uk-offcanvas-content">
+      <div class="uk-navbar-container uk-navbar-transparent" uk-navbar="uk-navbar">
+        <div id="mobile-nav" uk-offcanvas="overlay: true">
+          <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+            <ul class="uk-nav-parent-icon uk-nav-primary uk-nav-center uk-margin-auto-vertical" uk-nav>
+              <li><a href="<%= base_url %>">Home</a></li>
+              <li><a href="<%= base_url %>library">Library</a></li>
+              <li><a href="<%= base_url %>tags">Tags</a></li>
+              <% if is_admin %>
+                <li><a href="<%= base_url %>admin">Admin</a></li>
+                <li class="uk-parent">
+                  <a href="#">Download</a>
+                  <ul class="uk-nav-sub">
+                    <li><a href="<%= base_url %>download">MangaDex</a></li>
+                    <li><a href="<%= base_url %>download/plugins">Plugins</a></li>
+                    <li><a href="<%= base_url %>admin/downloads">Download Manager</a></li>
+                    <li><a href="<%= base_url %>download/subscription">Subscription Manager</a></li>
+                  </ul>
+                </li>
+              <% end %>
+              <hr uk-divider>
+              <li><a onclick="toggleTheme()"><i class="fas fa-adjust"></i></a></li>
+              <li><a href="<%= base_url %>logout">Logout</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="uk-position-top">
-            <div class="uk-navbar-container uk-navbar-transparent" uk-navbar="uk-navbar">
-                <div class="uk-navbar-left uk-hidden@s">
-                    <div class="uk-navbar-toggle" uk-navbar-toggle-icon="uk-navbar-toggle-icon" uk-toggle="target: #mobile-nav"></div>
-                </div>
-                <div class="uk-navbar-left uk-visible@s">
-                    <a class="uk-navbar-item uk-logo" href="<%= base_url %>"><img src="<%= base_url %>img/icon.png" style="width:90px;height:90px;"></a>
-                    <ul class="uk-navbar-nav">
-                        <li><a href="<%= base_url %>">Home</a></li>
-                        <li><a href="<%= base_url %>library">Library</a></li>
-                        <li><a href="<%= base_url %>tags">Tags</a></li>
-                        <% if is_admin %>
-                            <li><a href="<%= base_url %>admin">Admin</a></li>
-                            <li>
-                                <a href="#">Download</a>
-                                <div class="uk-navbar-dropdown">
-                                    <ul class="uk-nav uk-navbar-dropdown-nav">
-                                        <li class="uk-nav-header">Source</li>
-                                        <li><a href="<%= base_url %>download">MangaDex</a></li>
-                                        <li><a href="<%= base_url %>download/plugins">Plugins</a></li>
-                                        <li class="uk-nav-divider"></li>
-                                        <li><a href="<%= base_url %>admin/downloads">Download Manager</a></li>
-                                    </ul>
-                                </div>
-                            </li>
-                        <% end %>
-                    </ul>
-                </div>
-                <div class="uk-navbar-right uk-visible@s">
-                    <ul class="uk-navbar-nav">
-                        <li><a onclick="toggleTheme()"><i class="fas fa-adjust"></i></a></li>
-                        <li><a href="<%= base_url %>logout">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="uk-position-top">
+      <div class="uk-navbar-container uk-navbar-transparent" uk-navbar="uk-navbar">
+        <div class="uk-navbar-left uk-hidden@s">
+          <div class="uk-navbar-toggle" uk-navbar-toggle-icon="uk-navbar-toggle-icon" uk-toggle="target: #mobile-nav"></div>
         </div>
-        <div class="uk-section uk-section-small">
-        </div>
-        <div class="uk-section uk-section-small" style="position:relative;">
-            <div class="uk-container uk-container-small">
-                <div id="alert"></div>
-                <%= content %>
-                <div class="uk-visible@m" id="totop-wrapper" x-data="{}" x-show="$('body').height() > 1.5 * $(window).height()">
-                    <a href="#" uk-totop uk-scroll></a>
+        <div class="uk-navbar-left uk-visible@s">
+          <a class="uk-navbar-item uk-logo" href="<%= base_url %>"><img src="<%= base_url %>img/icon.png" style="width:90px;height:90px;"></a>
+          <ul class="uk-navbar-nav">
+            <li><a href="<%= base_url %>">Home</a></li>
+            <li><a href="<%= base_url %>library">Library</a></li>
+            <li><a href="<%= base_url %>tags">Tags</a></li>
+            <% if is_admin %>
+              <li><a href="<%= base_url %>admin">Admin</a></li>
+              <li>
+                <a href="#">Download</a>
+                <div class="uk-navbar-dropdown">
+                  <ul class="uk-nav uk-navbar-dropdown-nav">
+                    <li class="uk-nav-header">Source</li>
+                    <li><a href="<%= base_url %>download">MangaDex</a></li>
+                    <li><a href="<%= base_url %>download/plugins">Plugins</a></li>
+                    <li class="uk-nav-divider"></li>
+                    <li><a href="<%= base_url %>admin/downloads">Download Manager</a></li>
+                    <li><a href="<%= base_url %>download/subscription">Subscription Manager</a></li>
+                  </ul>
                 </div>
-            </div>
+              </li>
+            <% end %>
+          </ul>
         </div>
-        <script>
-            setTheme();
-            const base_url = "<%= base_url %>";
-        </script>
-        <%= render_component "uikit" %>
-        <%= yield_content "script" %>
-    </body>
+        <div class="uk-navbar-right uk-visible@s">
+          <ul class="uk-navbar-nav">
+            <li><a onclick="toggleTheme()"><i class="fas fa-adjust"></i></a></li>
+            <li><a href="<%= base_url %>logout">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="uk-section uk-section-small">
+    </div>
+    <div class="uk-section uk-section-small" style="position:relative;">
+      <div class="uk-container uk-container-small">
+        <div id="alert"></div>
+        <%= content %>
+        <div class="uk-visible@m" id="totop-wrapper" x-data="{}" x-show="$('body').height() > 1.5 * $(window).height()">
+          <a href="#" uk-totop uk-scroll></a>
+        </div>
+      </div>
+    </div>
+    <script>
+      setTheme();
+      const base_url = "<%= base_url %>";
+    </script>
+    <%= render_component "uikit" %>
+    <%= yield_content "script" %>
+  </body>
 
 </html>

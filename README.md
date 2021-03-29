@@ -52,7 +52,7 @@ The official docker images are available on [Dockerhub](https://hub.docker.com/r
 ### CLI
 
 ```
-  Mango - Manga Server and Web Reader. Version 0.21.0
+  Mango - Manga Server and Web Reader. Version 0.22.0
 
   Usage:
 
@@ -99,6 +99,7 @@ mangadex:
   download_queue_db_path: ~/mango/queue.db
   chapter_rename_rule: '[Vol.{volume} ][Ch.{chapter} ]{title|id}'
   manga_rename_rule: '{title}'
+  subscription_update_interval_hours: 24
 ```
 
 - `scan_interval_minutes`, `thumbnail_generation_interval_hours` and `db_optimization_interval_hours` can be any non-negative integer. Setting them to `0` disables the periodic tasks

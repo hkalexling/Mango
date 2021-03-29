@@ -1,162 +1,170 @@
 <h2 class=uk-title>Download from MangaDex</h2>
 <div x-data="downloadComponent()" x-init="init()">
-  <div class="uk-grid-small" uk-grid style="margin-bottom:40px;">
-    <div class="uk-width-expand">
-      <input class="uk-input" type="text" :placeholder="searchAvailable ? 'Search MangaDex or enter a manga ID/URL' : 'MangaDex manga ID or URL'" x-model="searchInput" @keydown.enter.debounce="search()">
-    </div>
-    <div class="uk-width-auto">
-      <div uk-spinner class="uk-align-center" x-show="loading" x-cloak></div>
-      <button class="uk-button uk-button-default" x-show="!loading" @click="search()">Search</button>
-    </div>
-  </div>
-
-  <template x-if="mangaAry">
-    <div>
-      <p x-show="mangaAry.length === 0">No matching manga found.</p>
-
-      <div class="uk-child-width-1-4@m uk-child-width-1-2" uk-grid>
-        <template x-for="manga in mangaAry" :key="manga.id">
-          <div class="item" :data-id="manga.id" @click="chooseManga(manga)">
-            <div class="uk-card uk-card-default">
-              <div class="uk-card-media-top uk-inline">
-                <img uk-img :data-src="manga.mainCover">
-              </div>
-              <div class="uk-card-body">
-                <h3 class="uk-card-title break-word uk-margin-remove-bottom free-height" x-text="manga.title"></h3>
-                <p class="uk-text-meta" x-text="`ID: ${manga.id}`"></p>
-              </div>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-  </template>
-
-  <div x-show="data && data.chapters" x-cloak>
-    <div class"uk-grid-small" uk-grid>
-      <div class="uk-width-1-4@s">
-        <img :src="data.mainCover">
-      </div>
-      <div class="uk-width-1-4@s">
-        <p>Title: <a :href="`<%= mangadex_base_url %>/manga/${data.id}`" x-text="data.title"></a></p>
-        <p x-text="`Artist: ${data.artist}`"></p>
-        <p x-text="`Author: ${data.author}`"></p>
-      </div>
-      <div class="uk-form-stacked uk-width-1-2@s" id="filters">
-        <p class="uk-text-lead uk-margin-remove-bottom">Filter Chapters</p>
-        <p class="uk-text-meta uk-margin-remove-top" x-text="`${chapters.length} chapters found`"></p>
-        <div class="uk-margin">
-          <label class="uk-form-label">Language</label>
-          <div class="uk-form-controls">
-            <select class="uk-select filter-field" x-model="langChoice" @change="filtersUpdated()">
-              <template x-for="lang in languages" :key="lang">
-                <option x-text="lang"></option>
-              </template>
-            </select>
-          </div>
+    <div class="uk-grid-small" uk-grid style="margin-bottom:40px;">
+        <div class="uk-width-expand">
+            <input class="uk-input" type="text" :placeholder="searchAvailable ? 'Search MangaDex or enter a manga ID/URL' : 'MangaDex manga ID or URL'" x-model="searchInput" @keydown.enter.debounce="search()">
         </div>
-
-        <div class="uk-margin">
-          <label class="uk-form-label">Group</label>
-          <div class="uk-form-controls">
-            <select class="uk-select filter-field" x-model="groupChoice" @change="filtersUpdated()">
-              <template x-for="group in groups" :key="group">
-                <option x-text="group"></option>
-              </template>
-            </select>
-          </div>
+        <div class="uk-width-auto">
+            <div uk-spinner class="uk-align-center" x-show="loading" x-cloak></div>
+            <button class="uk-button uk-button-default" x-show="!loading" @click="search()">Search</button>
         </div>
-
-        <div class="uk-margin">
-          <label class="uk-form-label">Volume</label>
-          <div class="uk-form-controls">
-            <input class="uk-input filter-field" type="text" placeholder="e.g., 127, 10-14, >30, <=212, or leave it empty." x-model="volumeRange" @keydown.enter="filtersUpdated()">
-          </div>
-        </div>
-
-        <div class="uk-margin">
-          <label class="uk-form-label">Chapter</label>
-          <div class="uk-form-controls">
-            <input class="uk-input filter-field" type="text" placeholder="e.g., 127, 10-14, >30, <=212, or leave it empty." x-model="chapterRange" @keydown.enter="filtersUpdated()">
-          </div>
-        </div>
-      </div>
     </div>
 
-    <div class="uk-margin">
-      <div class="uk-margin">
-        <button class="uk-button uk-button-default" @click="selectAll()">Select All</button>
-        <button class="uk-button uk-button-default" @click="clearSelection()">Clear Selections</button>
-        <button class="uk-button uk-button-primary" @click="download()" x-show="!addingToDownload">Download Selected</button>
-        <div uk-spinner class="uk-margin-left" x-show="addingToDownload"></div>
-      </div>
-      <p class="uk-text-meta">Click on a table row to select the chapter. Drag your mouse over multiple rows to select them all. Hold Ctrl to make multiple non-adjacent selections.</p>
-    </div>
-    <p x-text="`Mango can only list ${chaptersLimit} chapters, but we found ${chapters.length} chapters. Please use the filter options above to narrow down your search.`" x-show="chapters.length > chaptersLimit"></p>
-    <table class="uk-table uk-table-striped uk-overflow-auto" x-show="chapters.length <= chaptersLimit">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Title</th>
-          <th>Language</th>
-          <th>Group</th>
-          <th>Volume</th>
-          <th>Chapter</th>
-          <th>Timestamp</th>
-        </tr>
-      </thead>
+    <template x-if="mangaAry">
+        <div>
+            <p x-show="mangaAry.length === 0">No matching manga found.</p>
 
-      <template x-if="chapters.length <= chaptersLimit">
-        <tbody id="selectable">
-          <template x-for="chp in chapters" :key="chp">
-            <tr class="ui-widget-content">
-              <td><a :href="`<%= mangadex_base_url %>/chapter/${chp.id}`" x-text="chp.id"></a></td>
-              <td x-text="chp.title"></td>
-              <td x-text="chp.language"></td>
-              <td>
-                <template x-for="grp in Object.entries(chp.groups)">
-                  <div>
-                    <a :href="`<%= mangadex_base_url %>/group/${grp[1]}`" x-text="grp[0]"></a>
-                  </div>
+            <div class="uk-child-width-1-4@m uk-child-width-1-2" uk-grid>
+                <template x-for="manga in mangaAry" :key="manga.id">
+                    <div class="item" :data-id="manga.id" @click="chooseManga(manga)">
+                        <div class="uk-card uk-card-default">
+                            <div class="uk-card-media-top uk-inline">
+                                <img uk-img :data-src="manga.mainCover">
+                            </div>
+                            <div class="uk-card-body">
+                                <h3 class="uk-card-title break-word uk-margin-remove-bottom free-height" x-text="manga.title"></h3>
+                                <p class="uk-text-meta" x-text="`ID: ${manga.id}`"></p>
+                            </div>
+                        </div>
+                    </div>
                 </template>
-              </td>
-              <td x-text="chp.volume"></td>
-              <td x-text="chp.chapter"></td>
-              <td x-text="`${moment.unix(chp.timestamp).fromNow()}`"></td>
-            </tr>
-          </template>
-        </tbody>
-      </template>
-    </table>
-  </div>
-
-  <div id="modal" class="uk-flex-top" uk-modal="container: false">
-    <div class="uk-modal-dialog uk-margin-auto-vertical">
-      <button class="uk-modal-close-default" type="button" uk-close></button>
-      <div class="uk-modal-header">
-        <h3 class="uk-modal-title break-word" x-text="candidateManga.title"></h3>
-      </div>
-      <div class="uk-modal-body">
-        <div class="uk-grid">
-          <div class="uk-width-1-3@s">
-            <img uk-img data-width data-height :src="candidateManga.mainCover" style="width:100%;margin-bottom:10px;">
-            <a :href="`<%= mangadex_base_url %>/manga/${candidateManga.id}`" x-text="`ID: ${candidateManga.id}`" class="uk-link-muted"></a>
-          </div>
-          <div class="uk-width-2-3@s" uk-overflow-auto>
-            <p x-text="candidateManga.description"></p>
-          </div>
+            </div>
         </div>
-      </div>
-      <div class="uk-modal-footer">
-        <button class="uk-button uk-button-primary" type="button" @click="confirmManga(candidateManga.id)">Choose</button>
-      </div>
+    </template>
+
+    <div x-show="data && data.chapters" x-cloak>
+        <div class"uk-grid-small" uk-grid>
+            <div class="uk-width-1-4@s">
+                <img :src="data.mainCover">
+            </div>
+            <div class="uk-width-1-4@s">
+                <p>Title: <a :href="`<%= mangadex_base_url %>/manga/${data.id}`" x-text="data.title"></a></p>
+                <p x-text="`Artist: ${data.artist}`"></p>
+                <p x-text="`Author: ${data.author}`"></p>
+            </div>
+            <div class="uk-form-stacked uk-width-1-2@s" id="filters">
+                <p class="uk-text-lead uk-margin-remove-bottom">
+                <span>Filter Chapters</span>
+                <button class="uk-icon-button uk-align-right" uk-icon="rss" uk-tooltip="Subscribe" x-show="searchAvailable" @click="subscribe()"></button>
+                </p>
+                <p class="uk-text-meta uk-margin-remove-top" x-text="`${chapters.length} chapters found`"></p>
+                <div class="uk-margin">
+                    <label class="uk-form-label">Language</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select filter-field" x-model="langChoice" @change="filtersUpdated()">
+                            <template x-for="lang in languages" :key="lang">
+                                <option x-text="lang"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label">Group</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select filter-field" x-model="groupChoice" @change="filtersUpdated()">
+                            <template x-for="group in groups" :key="group">
+                                <option x-text="group"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label">Volume</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input filter-field" type="text" placeholder="e.g., 127, 10-14, >30, <=212, or leave it empty." x-model="volumeRange" @keydown.enter="filtersUpdated()">
+                    </div>
+                </div>
+
+                <div class="uk-margin">
+                    <label class="uk-form-label">Chapter</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input filter-field" type="text" placeholder="e.g., 127, 10-14, >30, <=212, or leave it empty." x-model="chapterRange" @keydown.enter="filtersUpdated()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uk-margin">
+            <div class="uk-margin">
+                <button class="uk-button uk-button-default" @click="selectAll()">Select All</button>
+                <button class="uk-button uk-button-default" @click="clearSelection()">Clear Selections</button>
+                <button class="uk-button uk-button-primary" @click="download()" x-show="!addingToDownload">Download Selected</button>
+                <div uk-spinner class="uk-margin-left" x-show="addingToDownload"></div>
+            </div>
+            <p class="uk-text-meta">Click on a table row to select the chapter. Drag your mouse over multiple rows to select them all. Hold Ctrl to make multiple non-adjacent selections.</p>
+        </div>
+        <p x-text="`Mango can only list ${chaptersLimit} chapters, but we found ${chapters.length} chapters. Please use the filter options above to narrow down your search.`" x-show="chapters.length > chaptersLimit"></p>
+        <div class="uk-overflow-auto">
+            <table class="uk-table uk-table-striped" x-show="chapters.length <= chaptersLimit">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Language</th>
+                        <th>Group</th>
+                        <th>Volume</th>
+                        <th>Chapter</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+
+                <template x-if="chapters.length <= chaptersLimit">
+                    <tbody id="selectable">
+                        <template x-for="chp in chapters" :key="chp">
+                            <tr class="ui-widget-content">
+                                <td><a :href="`<%= mangadex_base_url %>/chapter/${chp.id}`" x-text="chp.id"></a></td>
+                                <td x-text="chp.title"></td>
+                                <td x-text="chp.language"></td>
+                                <td>
+                                    <template x-for="grp in Object.entries(chp.groups)">
+                                        <div>
+                                            <a :href="`<%= mangadex_base_url %>/group/${grp[1]}`" x-text="grp[0]"></a>
+                                        </div>
+                                    </template>
+                                </td>
+                                <td x-text="chp.volume"></td>
+                                <td x-text="chp.chapter"></td>
+                                <td x-text="`${moment.unix(chp.timestamp).fromNow()}`"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </template>
+            </table>
+        </div>
     </div>
-  </div>
+
+    <div id="modal" class="uk-flex-top" uk-modal="container: false">
+        <div class="uk-modal-dialog uk-margin-auto-vertical">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <div class="uk-modal-header">
+                <h3 class="uk-modal-title break-word" x-text="candidateManga.title"></h3>
+            </div>
+            <div class="uk-modal-body">
+                <div class="uk-grid">
+                    <div class="uk-width-1-3@s">
+                        <img uk-img data-width data-height :src="candidateManga.mainCover" style="width:100%;margin-bottom:10px;">
+                        <a :href="`<%= mangadex_base_url %>/manga/${candidateManga.id}`" x-text="`ID: ${candidateManga.id}`" class="uk-link-muted"></a>
+                    </div>
+                    <div class="uk-width-2-3@s">
+                        <p x-text="candidateManga.description"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-modal-footer">
+                <button class="uk-button uk-button-primary" type="button" @click="confirmManga(candidateManga.id)">Choose</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <% content_for "script" do %>
-  <%= render_component "moment" %>
-  <%= render_component "jquery-ui" %>
-  <script src="<%= base_url %>js/alert.js"></script>
-  <script src="<%= base_url %>js/download.js"></script>
+    <%= render_component "moment" %>
+    <%= render_component "jquery-ui" %>
+    <script>
+        const mangadex_base_url = "<%= mangadex_base_url %>";
+    </script>
+    <script src="<%= base_url %>js/alert.js"></script>
+    <script src="<%= base_url %>js/download.js"></script>
 <% end %>

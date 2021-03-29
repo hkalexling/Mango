@@ -2,7 +2,7 @@ version: 2.0
 shards:
   ameba:
     git: https://github.com/crystal-ameba/ameba.git
-    version: 0.12.1
+    version: 0.14.0
 
   archive:
     git: https://github.com/hkalexling/archive.cr.git
@@ -30,7 +30,7 @@ shards:
 
   http_proxy:
     git: https://github.com/mamantoha/http_proxy.git
-    version: 0.7.1
+    version: 0.8.0
 
   image_size:
     git: https://github.com/hkalexling/image_size.cr.git
@@ -42,7 +42,7 @@ shards:
 
   kemal-session:
     git: https://github.com/kemalcr/kemal-session.git
-    version: 0.12.1
+    version: 0.13.0
 
   kilt:
     git: https://github.com/jeromegn/kilt.git
@@ -54,7 +54,7 @@ shards:
 
   mangadex:
     git: https://github.com/hkalexling/mangadex.git
-    version: 0.8.0+git.commit.24e6fb51afd043721139355854e305b43bf98c43
+    version: 0.11.0+git.commit.f5b0d64fbb138879fb9228b6e9ff34ec97c3e824
 
   mg:
     git: https://github.com/hkalexling/mg.git

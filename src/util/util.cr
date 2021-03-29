@@ -114,7 +114,7 @@ class String
   def components_similarity(other : String) : Float64
     s, l = [self, other]
       .map { |str| Path.new(str).parts }
-      .sort_by &.size
+      .sort_by! &.size
 
     match = s.reverse.zip(l.reverse).count { |a, b| a == b }
     match / s.size

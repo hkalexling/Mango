@@ -20,7 +20,6 @@ class Config
   property plugin_path : String = File.expand_path "~/mango/plugins",
     home: true
   property download_timeout_seconds : Int32 = 30
-  property page_margin : Int32 = 30
   property disable_login = false
   property default_username = ""
   property auth_proxy_header_name = ""
@@ -34,8 +33,10 @@ class Config
     "download_retries"       => 4,
     "download_queue_db_path" => File.expand_path("~/mango/queue.db",
       home: true),
-    "chapter_rename_rule" => "[Vol.{volume} ][Ch.{chapter} ]{title|id}",
-    "manga_rename_rule"   => "{title}",
+    "chapter_rename_rule" => "[Vol.{volume} ]" \
+                             "[Ch.{chapter} ]{title|id}",
+    "manga_rename_rule"                  => "{title}",
+    "subscription_update_interval_hours" => 24,
   }
 
   @@singlet : Config?

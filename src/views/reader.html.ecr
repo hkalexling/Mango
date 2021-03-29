@@ -25,11 +25,11 @@
             <img
               uk-img
               :class="{'uk-align-center': true, 'spine': item.width < 50}"
-              :style="item.style"
               :data-src="item.url"
               :width="item.width"
               :height="item.height"
               :id="item.id"
+              :style="`margin-top:${margin}px; margin-bottom:${margin}px`"
               @click="showControl($event)"
               />
           </template>
@@ -80,6 +80,7 @@
               </select>
             </div>
           </div>
+
           <div class="uk-margin">
             <label class="uk-form-label" for="mode-select">Mode</label>
             <div class="uk-form-controls">
@@ -87,6 +88,13 @@
                 <option value="continuous">Continuous</option>
                 <option value="paged">Paged</option>
               </select>
+            </div>
+          </div>
+
+          <div class="uk-margin" x-show="mode === 'continuous'">
+            <label class="uk-form-label" for="margin-range" x-text="`Page Margin: ${margin}px`"></label>
+            <div class="uk-form-controls">
+              <input id="margin-range" class="uk-range" type="range" min="0" max="50" step="5" x-model="margin" @change="marginChanged()">
             </div>
           </div>
 
@@ -110,12 +118,12 @@
         </div>
         <div class="uk-modal-footer uk-text-right">
           <% if previous_entry_url %>
-            <a class="uk-button uk-button-default uk-margin-small-right" href="<%= previous_entry_url %>">Previous Entry</a>
+            <a class="uk-button uk-button-default uk-margin-small-bottom uk-margin-small-right" href="<%= previous_entry_url %>">Previous Entry</a>
           <% end %>
           <% if next_entry_url %>
-            <a class="uk-button uk-button-default uk-margin-small-right" href="<%= next_entry_url %>">Next Entry</a>
+            <a class="uk-button uk-button-default uk-margin-small-bottom uk-margin-small-right" href="<%= next_entry_url %>">Next Entry</a>
           <% end %>
-          <a class="uk-button uk-button-danger" href="<%= exit_url %>">Exit Reader</a>
+          <a class="uk-button uk-button-danger uk-margin-small-bottom uk-margin-small-right" href="<%= exit_url %>">Exit Reader</a>
         </div>
       </div>
     </div>

@@ -8,9 +8,7 @@ describe Storage do
   end
 
   it "deletes user" do
-    with_storage do |storage|
-      storage.delete_user "admin"
-    end
+    with_storage &.delete_user "admin"
   end
 
   it "creates new user" do

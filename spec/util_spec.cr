@@ -21,7 +21,7 @@ describe "compare_numerically" do
   it "sorts like the stack exchange post" do
     ary = ["2", "12", "200000", "1000000", "a", "a12", "b2", "text2",
            "text2a", "text2a2", "text2a12", "text2ab", "text12", "text12a"]
-    ary.reverse.sort { |a, b|
+    ary.reverse.sort! { |a, b|
       compare_numerically a, b
     }.should eq ary
   end
@@ -29,7 +29,7 @@ describe "compare_numerically" do
   # https://github.com/hkalexling/Mango/issues/22
   it "handles numbers larger than Int32" do
     ary = ["14410155591588.jpg", "21410155591588.png", "104410155591588.jpg"]
-    ary.reverse.sort { |a, b|
+    ary.reverse.sort! { |a, b|
       compare_numerically a, b
     }.should eq ary
   end
@@ -56,7 +56,7 @@ describe "chapter_sort" do
   it "sorts correctly" do
     ary = ["Vol.1 Ch.01", "Vol.1 Ch.02", "Vol.2 Ch. 2.5", "Ch. 3", "Ch.04"]
     sorter = ChapterSorter.new ary
-    ary.reverse.sort do |a, b|
+    ary.reverse.sort! do |a, b|
       sorter.compare a, b
     end.should eq ary
   end

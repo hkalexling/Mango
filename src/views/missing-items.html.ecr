@@ -3,34 +3,36 @@
   <div x-show="!empty">
     <p>The following items were present in your library, but now we can't find them anymore. If you deleted them mistakenly, try to recover the files or folders, put them back to where they were, and rescan the library. Otherwise, you can safely delete them and the associated metadata using the buttons below to free up database space.</p>
     <button class="uk-button uk-button-danger" @click="rmAll()">Delete All</button>
-    <table class="uk-table uk-table-striped uk-overflow-auto">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Relative Path</th>
-          <th>ID</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template x-for="title in titles" :key="title">
-          <tr :id="`title-${title.id}`">
-            <td>Title</td>
-            <td x-text="title.path"></td>
-            <td x-text="title.id"></td>
-            <td><a @click="rm($event)" uk-icon="trash"></a></td>
+    <div class="uk-overflow-auto">
+      <table class="uk-table uk-table-striped">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Relative Path</th>
+            <th>ID</th>
+            <th>Actions</th>
           </tr>
-        </template>
-        <template x-for="entry in entries" :key="entry">
-          <tr :id="`entry-${entry.id}`">
-            <td>Entry</td>
-            <td x-text="entry.path"></td>
-            <td x-text="entry.id"></td>
-            <td><a @click="rm($event)" uk-icon="trash"></a></td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <template x-for="title in titles" :key="title">
+            <tr :id="`title-${title.id}`">
+              <td>Title</td>
+              <td x-text="title.path"></td>
+              <td x-text="title.id"></td>
+              <td><a @click="rm($event)" uk-icon="trash"></a></td>
+            </tr>
+          </template>
+          <template x-for="entry in entries" :key="entry">
+            <tr :id="`entry-${entry.id}`">
+              <td>Entry</td>
+              <td x-text="entry.path"></td>
+              <td x-text="entry.id"></td>
+              <td><a @click="rm($event)" uk-icon="trash"></a></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

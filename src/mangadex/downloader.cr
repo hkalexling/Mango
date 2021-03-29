@@ -49,6 +49,9 @@ module MangaDex
       @queue.set_status Queue::JobStatus::Downloading, job
       begin
         chapter = @client.chapter job.id
+        # We must put the `.pages` call in a rescue block to handle external
+        #   chapters.
+        pages = chapter.pages
       rescue e
         Logger.error e
         @queue.set_status Queue::JobStatus::Error, job
@@ -58,7 +61,7 @@ module MangaDex
         @downloading = false
         return
       end
-      @queue.set_pages chapter.pages.size, job
+      @queue.set_pages pages.size, job
       lib_dir = @library_path
       rename_rule = Rename::Rule.new \
         Config.current.mangadex["manga_rename_rule"].to_s
@@ -69,13 +72,13 @@ module MangaDex
       zip_path = File.join manga_dir, "#{job.title}.cbz.part"
 
       # Find the number of digits needed to store the number of pages
-      len = Math.log10(chapter.pages.size).to_i + 1
+      len = Math.log10(pages.size).to_i + 1
 
       writer = Compress::Zip::Writer.new zip_path
       # Create a buffered channel. It works as an FIFO queue
-      channel = Channel(PageJob).new chapter.pages.size
+      channel = Channel(PageJob).new pages.size
       spawn do
-        chapter.pages.each_with_index do |url, i|
+        pages.each_with_index do |url, i|
           fn = Path.new(URI.parse(url).path).basename
           ext = File.extname fn
           fn = "#{i.to_s.rjust len, '0'}#{ext}"
@@ -99,7 +102,7 @@ module MangaDex
 
       spawn do
         page_jobs = [] of PageJob
-        chapter.pages.size.times do
+        pages.size.times do
           page_job = channel.receive
 
           break unless @queue.exists? job

@@ -73,7 +73,7 @@ class ChapterSorter
       .select do |key|
         keys[key].count >= str_ary.size / 2
       end
-      .sort do |a_key, b_key|
+      .sort! do |a_key, b_key|
         a = keys[a_key]
         b = keys[b_key]
         # Sort keys by the number of times they appear

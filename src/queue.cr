@@ -303,12 +303,12 @@ class Queue
   end
 
   def pause
-    @downloaders.each { |d| d.stopped = true }
+    @downloaders.each &.stopped=(true)
     @paused = true
   end
 
   def resume
-    @downloaders.each { |d| d.stopped = false }
+    @downloaders.each &.stopped=(false)
     @paused = false
   end
 

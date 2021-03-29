@@ -12,12 +12,12 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: crystallang/crystal:0.35.1-alpine
+      image: crystallang/crystal:0.36.1-alpine
 
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: apk add --no-cache yarn yaml sqlite-static libarchive-dev libarchive-static acl-static expat-static zstd-static lz4-static bzip2-static libjpeg-turbo-dev libpng-dev tiff-dev
+      run: apk add --no-cache yarn yaml-static sqlite-static libarchive-dev libarchive-static acl-static expat-static zstd-static lz4-static bzip2-static libjpeg-turbo-dev libpng-dev tiff-dev
     - name: Build
       run: make static || make static
     - name: Linter

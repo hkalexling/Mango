@@ -2,7 +2,7 @@ FROM arm32v7/ubuntu:18.04
 
 RUN apt-get update && apt-get install -y wget git make llvm-8 llvm-8-dev g++ libsqlite3-dev libyaml-dev libgc-dev libssl-dev libcrypto++-dev libevent-dev libgmp-dev zlib1g-dev libpcre++-dev pkg-config libarchive-dev libxml2-dev libacl1-dev nettle-dev liblzo2-dev liblzma-dev libbz2-dev libjpeg-turbo8-dev libpng-dev libtiff-dev
 
-RUN git clone https://github.com/crystal-lang/crystal && cd crystal && git checkout 0.35.1 && make deps && cd ..
+RUN git clone https://github.com/crystal-lang/crystal && cd crystal && git checkout 0.36.1 && make deps && cd ..
 RUN git clone https://github.com/kostya/myhtml && cd myhtml/src/ext && git checkout v1.5.0 && make && cd ..
 RUN git clone https://github.com/jessedoyle/duktape.cr && cd duktape.cr/ext && git checkout v0.20.0 && make && cd ..
 RUN git clone https://github.com/hkalexling/image_size.cr && cd image_size.cr && git checkout v0.2.0 && make && cd ..

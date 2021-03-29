@@ -1,4 +1,4 @@
-FROM crystallang/crystal:0.35.1-alpine AS builder
+FROM crystallang/crystal:0.36.1-alpine AS builder
 
 WORKDIR /Mango
 

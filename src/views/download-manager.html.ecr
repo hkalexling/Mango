@@ -5,61 +5,63 @@
     <button class="uk-button uk-button-default" @click="load()" :disabled="loading">Refresh Queue</button>
     <button class="uk-button uk-button-default" x-show="paused !== undefined" x-text="paused ? 'Resume Download' : 'Pause Download'" @click="toggle()" :disabled="toggling"></button>
   </div>
-  <table class="uk-table uk-table-striped uk-overflow-auto">
-    <thead>
-      <tr>
-        <th>Chapter</th>
-        <th>Manga</th>
-        <th>Progress</th>
-        <th>Time</th>
-        <th>Status</th>
-        <th>Plugin</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <template x-for="job in jobs" :key="job">
-        <tr :id="`chapter-${job.id}`">
-
-          <template x-if="job.plugin_id">
-            <td x-text="job.title"></td>
-          </template>
-          <template x-if="!job.plugin_id">
-            <td><a :href="`<%= mangadex_base_url %>/chapter/${job.id}`" x-text="job.title"></td>
-          </template>
-
-          <template x-if="job.plugin_id">
-            <td x-text="job.manga_title"></td>
-          </template>
-          <template x-if="!job.plugin_id">
-            <td><a :href="`<%= mangadex_base_url %>/manga/${job.manga_id}`" x-text="job.manga_title"></td>
-          </template>
-
-          <td x-text="`${job.success_count}/${job.pages}`"></td>
-          <td x-text="`${moment(job.time).fromNow()}`"></td>
-
-          <td>
-            <span :class="statusClass(job.status)" x-text="job.status"></span>
-            <template x-if="job.status_message.length > 0">
-              <div class="uk-inline">
-                <span uk-icon="info"></span>
-                <div uk-dropdown x-text="job.status_message" style="white-space: pre-line;"></div>
-              </div>
-            </template>
-          </td>
-
-          <td x-text="`${job.plugin_id || ''}`"></td>
-
-          <td>
-            <a @click="jobAction('delete', $event)" uk-icon="trash"></a>
-            <template x-if="job.status_message.length > 0">
-              <a @click="jobAction('retry', $event)" uk-icon="refresh"></a>
-            </template>
-          </td>
+  <div class="uk-overflow-auto">
+    <table class="uk-table uk-table-striped">
+      <thead>
+        <tr>
+          <th>Chapter</th>
+          <th>Manga</th>
+          <th>Progress</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Plugin</th>
+          <th>Actions</th>
         </tr>
-      </template>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <template x-for="job in jobs" :key="job">
+          <tr :id="`chapter-${job.id}`">
+
+            <template x-if="job.plugin_id">
+              <td x-text="job.title"></td>
+            </template>
+            <template x-if="!job.plugin_id">
+              <td><a :href="`<%= mangadex_base_url %>/chapter/${job.id}`" x-text="job.title"></td>
+            </template>
+
+            <template x-if="job.plugin_id">
+              <td x-text="job.manga_title"></td>
+            </template>
+            <template x-if="!job.plugin_id">
+              <td><a :href="`<%= mangadex_base_url %>/manga/${job.manga_id}`" x-text="job.manga_title"></td>
+            </template>
+
+            <td x-text="`${job.success_count}/${job.pages}`"></td>
+            <td x-text="`${moment(job.time).fromNow()}`"></td>
+
+            <td>
+              <span :class="statusClass(job.status)" x-text="job.status"></span>
+              <template x-if="job.status_message.length > 0">
+                <div class="uk-inline">
+                  <span uk-icon="info"></span>
+                  <div uk-dropdown x-text="job.status_message" style="white-space: pre-line;"></div>
+                </div>
+              </template>
+            </td>
+
+            <td x-text="`${job.plugin_id || ''}`"></td>
+
+            <td>
+              <a @click="jobAction('delete', $event)" uk-icon="trash" uk-tooltip="Delete"></a>
+              <template x-if="job.status_message.length > 0">
+                <a @click="jobAction('retry', $event)" uk-icon="refresh" uk-tooltip="Retry"></a>
+              </template>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <% content_for "script" do %>
